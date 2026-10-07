@@ -166,7 +166,7 @@ footer{display:flex;justify-content:space-between;align-items:flex-start;gap:20p
 <div class="row2" id="phases" hidden></div>
 <section class="card"><h2>Coach's report</h2><div id="out"><p>Load a video to begin.</p></div></section>
 <section class="card" id="tools"><h2>Share and squad</h2>
- <div class="row2"><label class="sw"><input type="checkbox" id="ghost"><i></i>Pro pop-up ghost</label><select id="ghostmode" aria-label="Ghost mode"><option value="pro">Race the pro pop-up</option><option value="follow">Ideal pose for my phase</option></select><select class="xlay" aria-label="Video layout"><option value="both">Original and annotated, side by side</option><option value="ann">Annotated only</option></select><select class="xfmt" aria-label="Video format"><option value="mp4">MP4</option><option value="webm">WebM</option></select><button id="xvid">Export video</button><button id="xcard">Export coaching card</button><button id="xshare">Share card</button><button id="xwa">WhatsApp summary</button><button id="xsq">Squad report</button></div>
+ <div class="row2"><label class="sw"><input type="checkbox" id="ghost"><i></i>Pro pop-up ghost</label><select id="ghostmode" aria-label="Ghost mode"><option value="pro">Race the pro pop-up</option><option value="follow">Ideal pose for my phase</option></select><select class="xlay" aria-label="Video layout"><option value="both">Original and annotated, side by side</option><option value="ann">Annotated only</option><option value="skel">Annotated and skeleton only, side by side</option></select><select class="xfmt" aria-label="Video format"><option value="mp4">MP4</option><option value="webm">WebM</option></select><button id="xvid">Export video</button><button id="xcard">Export coaching card</button><button id="xshare">Share card</button><button id="xwa">WhatsApp summary</button><button id="xpdf">Save report as PDF</button><button id="xsq">Squad report</button></div>
  <p class="note" id="xmsg">Load and analyse a video first. The green ghost is a professional-style pop-up scaled to the surfer.</p>
  <details class="how"><summary>About the pro benchmark and the 10-point score</summary><ul><li>I could not view professional footage. The benchmark comes from published research on experienced surfers and from coaching accounts of the one-motion pop-up used on tour.</li><li>Speed: in-water time to pop-up was about 0.6 s in one study (Parsonage et al., 2020). A laboratory pop-up took 1.2 s overall, with knees near 100 degrees and elbows near 110 degrees at peak push (Sensors, 2021).</li><li>The ghost pops up in 0.6 s from the moment the surfer leaves the board, lands both feet together in a low crouch, and keeps its eyes up.</li><li>10 means inside the benchmark range for speed, knee bend (95 to 125 degrees), foot width, torso lean, head position and steadiness. Those ranges are my coaching estimates, not published measurements of professionals.</li></ul></details><div id="squad" class="sqg"></div>
 </section>
@@ -175,7 +175,7 @@ footer{display:flex;justify-content:space-between;align-items:flex-start;gap:20p
 <section class="card" id="livec"><h2>Live Beach Challenge</h2>
  <p class="note">Set a camera side-on. Lie flat, wait for the WAVE cue, then pop up. Coach times your reaction and pop-up, gives instant tips and records the whole challenge. On a laptop or desktop, the built-in or USB webcam works directly: stand a few metres back, side-on, so the camera sees your whole body. On a phone, open this page over HTTPS in Safari or Chrome.</p>
  <div class="row2"><select id="camsel" aria-label="Camera"><option value="auto">Automatic camera</option><option value="user">Laptop or front webcam</option><option value="environment">Rear camera</option></select><button id="lcam">Start camera</button><button id="lgo" disabled>Start challenge</button><button id="lstop" disabled>Finish and export</button></div>
- <div class="row2"><span class="note" style="margin:0">Recording</span><select class="xlay" aria-label="Video layout"><option value="both">Original and annotated, side by side</option><option value="ann">Annotated only</option></select><select class="xfmt" aria-label="Video format"><option value="mp4">MP4</option><option value="webm">WebM</option></select></div>
+ <div class="row2"><span class="note" style="margin:0">Recording</span><select class="xlay" aria-label="Video layout"><option value="both">Original and annotated, side by side</option><option value="ann">Annotated only</option><option value="skel">Annotated and skeleton only, side by side</option></select><select class="xfmt" aria-label="Video format"><option value="mp4">MP4</option><option value="webm">WebM</option></select></div>
  <div class="row2"><button id="camfb">Record with phone camera app instead</button><input type="file" id="capf" accept="video/*" capture="environment" hidden><span class="note" style="margin:0">Works on any phone, even when the live camera is blocked. Coach analyses the clip afterwards.</span></div>
  <div class="stage"><canvas id="lc" class="b" width="640" height="360"></canvas></div><p id="lstat" class="note"></p><div id="lout"></div>
 </section>
@@ -188,7 +188,7 @@ footer{display:flex;justify-content:space-between;align-items:flex-start;gap:20p
 </section>
 <div id="print"></div>
 </div>
-<footer><span>&copy; 2026 Schmied Research And Development Pty Ltd</span><div class="contact"><b>For Information:</b><br>Dr Steven Schmied<br><a href="mailto:sschmie@tpg.com.au">sschmie@tpg.com.au</a></div></footer>
+<footer><span>&copy; 2026 Schmied Research And Development Pty Ltd<br><small>Version 2026.10.06a</small></span><div class="contact"><b>For Information:</b><br>Dr Steven Schmied<br><a href="mailto:sschmie@tpg.com.au">sschmie@tpg.com.au</a><br><a href="tel:+61418513890">Mob. +61 418 513 890</a></div></footer>
 
 <script>
 window.__ok=false;
@@ -234,6 +234,7 @@ async function analyse(m0){const n=Math.max(1,Math.floor(v.duration*FPS)),pg=$('
  let ok=false;if('requestVideoFrameCallback' in v)ok=await playPass(n,run,pg);
  if(!ok||F.filter(Boolean).length<.85*(n+1))await seekPass(n,run,pg);
  for(let i=0;i<=n;i++)if(!F[i]){let P=[];for(let j=i-1;j>=Math.max(0,i-2);j--)if(F[j]&&F[j].P.length){P=F[j].P;break}F[i]={t:i/FPS,P}}
+ if(v.error&&F.every(f=>!f||!f.P.length))throw Object.assign(new Error(await codecMsg(CUR)),{shown:1});
  if(st.t&&st.e/st.t>.3)throw new Error('Pose detection failed on most frames: '+st.msg);
  pg.hidden=true;v.pause();v.playbackRate=+$('#spd').value;v.currentTime=0}
 
@@ -356,17 +357,17 @@ ov.onclick=e=>{if(!F.length||busy)return;const r=ov.getBoundingClientRect(),s=Ma
 
 /* ---------- load ---------- */
 $('#vf').onchange=e=>load(e.target.files[0]);
-async function load(f){if(!f||busy)return;if(!setMode('upload'))return;busy=true;$('#err').hidden=true;F=[];S=[];M=[];reps=[];$('#out').textContent='';v.pause();$('#play').textContent='Play';let stage='reading the video';
+async function load(f){if(!f||busy)return;if(!setMode('upload'))return;CUR=f;busy=true;$('#err').hidden=true;F=[];S=[];M=[];reps=[];$('#out').textContent='';v.pause();$('#play').textContent='Play';let stage='reading the video';
  const shown=(msg)=>Object.assign(new Error(msg),{shown:1});
- try{v.onloadedmetadata=v.onerror=null;v.src=URL.createObjectURL(f);
-  await new Promise((ok,no)=>{v.onloadedmetadata=ok;v.onerror=()=>no(shown(vmsg()))});
+ try{v.onloadedmetadata=v.onerror=null;let retried=false;v.src=URL.createObjectURL(f);
+  await new Promise((ok,no)=>{v.onloadedmetadata=ok;v.onerror=()=>{if(!retried){retried=true;v.src=URL.createObjectURL(new Blob([f],{type:'video/mp4'}));return}codecMsg(f).then(m=>no(shown(m)))}});
   if(v.readyState<2)await new Promise(ok=>{v.addEventListener('loadeddata',ok,{once:true});setTimeout(ok,4000)});
   if(!v.videoWidth||!isFinite(v.duration))throw shown('The video has no readable picture or length. Try re-exporting it as a standard H.264 MP4.');
   ar=v.videoWidth/v.videoHeight;const w=Math.min(v.videoWidth,960),h=Math.round(w/ar);ov.width=w;ov.height=h;sk.width=w;sk.height=h;
   FPS=v.duration>60?8:(quality==='full'?15:12);stage='loading the pose model';say('Loading the pose model...');const m=await model(quality);
   stage='analysing the video';await analyse(m);pickDefault();report();say('Done. '+F.length+' frames analysed on this computer. Press play, or click a surfer to follow them. Yellow marks show what to improve.')}
  catch(err){$('#prog').hidden=true;
-  const tech=err&&err.shown?'file '+f.name+', '+Math.round(f.size/1e5)/10+' MB, '+(f.type||'unknown type')+', '+v.videoWidth+'x'+v.videoHeight:((err&&err.name?err.name+': ':'')+((err&&err.message)||String(err)));
+  const tech=err&&err.shown?'file '+f.name+', '+Math.round(f.size/1e5)/10+' MB, '+(f.type||'unknown type')+', '+v.videoWidth+'x'+v.videoHeight+', media error '+(v.error?v.error.code:'none')+', detected '+(SN.d||'unknown'):((err&&err.name?err.name+': ':'')+((err&&err.message)||String(err)));
   showErr(err&&err.shown?err.message:'Something went wrong while '+stage+'.'+(stage==='loading the pose model'?' Check you are online, then try again.':''),tech);
   say('Stopped while '+stage+'.')}
  busy=false;paint()}
@@ -450,22 +451,27 @@ document.querySelectorAll('.xfmt').forEach(el=>el.value=X.fmt);
 [['xlay','lay'],['xfmt','fmt']].forEach(([c,k])=>document.querySelectorAll('.'+c).forEach(el=>el.onchange=()=>{X[k]=el.value;document.querySelectorAll('.'+c).forEach(o=>o.value=X[k])}));
 const vext=mt=>mt&&mt.startsWith('video/mp4')?'mp4':'webm',vtype=mt=>(mt||'video/webm').split(';')[0];
 function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000)}
-function burn(x,W,H,txt){const fs=Math.round(W/34),lg=document.querySelector('.logo'),R=Math.round(H*.07);x.save();x.font='700 '+fs+'px system-ui,sans-serif';x.textBaseline='top';
- if(txt){x.fillStyle='rgba(0,0,0,.6)';x.fillRect(0,H-fs*1.9,x.measureText(txt).width+fs*2,fs*1.9);x.fillStyle='#ffd23f';x.fillText(txt,fs,H-fs*1.45)}
- x.save();x.beginPath();x.arc(W-R-14,R+14,R,0,7);x.clip();x.drawImage(lg,W-2*R-14,14,2*R,2*R);x.restore();
- x.font='600 '+Math.round(fs*.6)+'px Georgia,serif';x.fillStyle='#fff';x.textAlign='right';x.fillText('Schmied Research And Development',W-R*2-26,18);x.restore()}
+function burn(x,W,H,txt){const fs=Math.round(W/34);x.save();x.font='700 '+fs+'px system-ui,sans-serif';x.textBaseline='top';
+ if(txt){x.fillStyle='rgba(0,0,0,.6)';x.fillRect(0,H-fs*1.9,x.measureText(txt).width+fs*2,fs*1.9);x.fillStyle='#ffd23f';x.fillText(txt,fs,H-fs*1.45)}x.restore()}
+function brandBar(x,W,BH){x.save();x.fillStyle='#12161a';x.fillRect(0,0,W,BH);x.fillStyle='#d4501a';x.fillRect(0,0,W,3);   // company name and logo live in their own strip, so they never cover the comments
+ const lg=document.querySelector('.logo'),R=BH*.4,cx=BH*.5+8,cy=BH/2+1;x.save();x.beginPath();x.arc(cx,cy,R,0,7);x.clip();x.drawImage(lg,cx-R,cy-R,2*R,2*R);x.restore();
+ x.fillStyle='#fff';x.textBaseline='middle';x.textAlign='left';x.font='600 '+Math.round(BH*.42)+'px Georgia,serif';x.fillText('Schmied Research And Development Pty Ltd',BH+16,cy);x.restore()}
 function lab(x,t,X0,Y,fs,right){x.save();x.font='700 '+Math.round(fs)+'px system-ui,sans-serif';x.textBaseline='top';const w=x.measureText(t).width+fs;if(right)X0-=w;x.fillStyle='rgba(0,0,0,.6)';x.fillRect(X0,Y,w,fs*1.7);x.fillStyle='#fff';x.fillText(t,X0+fs/2,Y+fs*.35);x.restore()}
 $('#xvid').onclick=async()=>{if(!F.length||busy){msg('Load and analyse a video first.');return}
  const mt=mime();if(!mt){msg('This browser cannot record '+X.fmt.toUpperCase()+' video. Choose the other format.');return}
- busy=true;v.pause();const both=X.lay==='both',W=ov.width,H=ov.height,an=document.createElement('canvas');an.width=W;an.height=H;const ax=an.getContext('2d'),cv=both?document.createElement('canvas'):an;
- if(both){cv.width=W*2;cv.height=H}const x=cv.getContext('2d'),ch=[],rec=new MediaRecorder(cv.captureStream(30),{mimeType:mt,videoBitsPerSecond:both?6e6:4e6}),nm=$('#sname').value.trim(),fs=W/40;
+ busy=true;v.pause();const lay=X.lay,W=ov.width,H=ov.height,BH=Math.round(W*.075),cols=lay==='ann'?1:2,an=document.createElement('canvas'),sp=document.createElement('canvas'),cv=document.createElement('canvas');
+ an.width=sp.width=W;an.height=sp.height=H;cv.width=W*cols;cv.height=H+BH;
+ const ax=an.getContext('2d'),x=cv.getContext('2d'),ch=[],rec=new MediaRecorder(cv.captureStream(30),{mimeType:mt,videoBitsPerSecond:cols>1?6e6:4e6}),nm=$('#sname').value.trim(),fs=W/40,yl=BH+H-fs*1.7-10;
  rec.ondataavailable=e=>e.data.size&&ch.push(e.data);const done=new Promise(r=>rec.onstop=r);await seek(0);v.playbackRate=1;rec.start();await v.play();
  await new Promise(res=>{const f=()=>{const i=Math.min(F.length-1,Math.round(v.currentTime*FPS)),r=reps.find(r=>i>=r.a&&i<=r.b+Math.ceil(FPS*.6));
   ax.drawImage(v,0,0,W,H);draw(an,false,i,true);burn(ax,W,H,[nm,r?'Pop-up '+Math.max(0,Math.min(F[i].t-F[r.a].t,r.dur)).toFixed(2)+' s':''].filter(Boolean).join('   '));
-  if(both){x.drawImage(v,0,0,W,H);lab(x,'Original',10,10,fs);x.drawImage(an,W,0);lab(x,'Annotated',2*W-10,H-fs*1.7-10,fs,1)}
+  brandBar(x,W*cols,BH);
+  if(lay==='ann')x.drawImage(an,0,BH);
+  else if(lay==='both'){x.drawImage(v,0,BH,W,H);lab(x,'Original',W-10,yl,fs,1);x.drawImage(an,W,BH);lab(x,'Annotated',2*W-10,yl,fs,1)}
+  else{draw(sp,true,i);x.drawImage(an,0,BH);lab(x,'Annotated',W-10,yl,fs,1);x.drawImage(sp,W,BH);lab(x,'Skeleton only',2*W-10,yl,fs,1)}
   msg('Recording the video... '+Math.round(v.currentTime/v.duration*100)+'%');if(v.ended||v.paused)res();else requestAnimationFrame(f)};f()});
- rec.stop();await done;dl(new Blob(ch,{type:vtype(mt)}),'popup-'+(both?'side-by-side':'annotated')+'.'+vext(mt));busy=false;
- msg((both?'Original and annotated video saved as ':'Annotated video saved as ')+vext(mt).toUpperCase()+'.');paint()};
+ rec.stop();await done;const nme=lay==='ann'?'annotated':lay==='both'?'original-and-annotated':'annotated-and-skeleton';dl(new Blob(ch,{type:vtype(mt)}),'popup-'+nme+'.'+vext(mt));busy=false;
+ msg((lay==='ann'?'Annotated video':lay==='both'?'Original and annotated video':'Annotated video and skeleton')+' saved as '+vext(mt).toUpperCase()+'.');paint()};
 function cardDraw(fr,meta){const W=1280,g=16,fw=Math.floor((W-g*6)/5),fh=Math.round(fw*fr[0].height/fr[0].width),sn=meta.sn,tips=(sn.tips||[]).slice(0,3),H=150+fh+70+Math.max(1,tips.length)*34+90,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d'),lg=document.querySelector('.logo');
  x.fillStyle='#12161a';x.fillRect(0,0,W,H);x.fillStyle='#ff6a2b';x.fillRect(0,0,W,5);
  x.save();x.beginPath();x.arc(66,70,40,0,7);x.clip();x.drawImage(lg,26,30,80,80);x.restore();
@@ -505,8 +511,8 @@ $('#lcam').onclick=async()=>{if(LV)return;
   LV={lv,m,st:'idle',reps:[],ch:[],rec:null,fr:[]};$('#lgo').disabled=false;$('#lstop').disabled=false;lstat('Camera ready. Set it side-on, then press Start challenge.');$('#lout').textContent='';liveLoop()}catch(e){lstat(camErr(e))}};
 $('#lgo').onclick=()=>{if(!LV)return;const mt=mime();let note='Challenge running and recording';
  if(!mt)note='Challenge running, but this browser cannot record '+X.fmt.toUpperCase()+' (choose the other format to record)';
- else if(!LV.rec){LV.mt=mt;let src=$('#lc');if(X.lay==='both'){const c=$('#lc');LV.rc=document.createElement('canvas');LV.rc.width=c.width*2;LV.rc.height=c.height;src=LV.rc}
-  LV.rec=new MediaRecorder(src.captureStream(30),{mimeType:mt,videoBitsPerSecond:X.lay==='both'?6e6:4e6});LV.rec.ondataavailable=e=>e.data.size&&LV.ch.push(e.data);LV.rec.start()}
+ else if(!LV.rec){LV.mt=mt;const c=$('#lc'),W=c.width,H=c.height,BH=Math.round(W*.075),cols=X.lay==='ann'?1:2;LV.lay=X.lay;LV.rc=document.createElement('canvas');LV.rc.width=W*cols;LV.rc.height=H+BH;LV.sp=document.createElement('canvas');LV.sp.width=W;LV.sp.height=H;
+  LV.rec=new MediaRecorder(LV.rc.captureStream(30),{mimeType:mt,videoBitsPerSecond:cols>1?6e6:4e6});LV.rec.ondataavailable=e=>e.data.size&&LV.ch.push(e.data);LV.rec.start()}
  LV.st='lie';LV.hold=0;lstat(note+'. Lie flat on your stomach, side-on to the camera.')};
 const reset2=()=>{Object.assign(LV,{st:'lie',hold:0,tl:0,react:0,t0:0,base:0,shots:[],ns:0,sc:0,pop:0,w:[],tS:0})};
 function liveLoop(){if(!LV)return;const{lv,m}=LV,c=$('#lc'),x=c.getContext('2d'),W=c.width,H=c.height,now=performance.now();x.drawImage(lv,0,0,W,H);
@@ -527,7 +533,11 @@ function liveLoop(){if(!LV)return;const{lv,m}=LV,c=$('#lc'),x=c.getContext('2d')
  if(LV.st!=='idle'&&LV.flash>now&&LV.res){big=LV.res;small='Rep '+LV.reps.length}
  const fs=Math.round(W/16);x.save();x.textAlign='center';x.font='800 '+fs+'px "Arial Narrow",Impact,sans-serif';x.lineWidth=6;x.strokeStyle='rgba(0,0,0,.7)';x.fillStyle=LV.st==='go'?'#3ed494':'#ffd23f';
  if(big){x.strokeText(big,W/2,fs*1.1);x.fillText(big,W/2,fs*1.1);x.font='600 '+Math.round(fs*.38)+'px system-ui,sans-serif';x.lineWidth=4;x.fillStyle='#fff';x.strokeText(small,W/2,fs*1.6);x.fillText(small,W/2,fs*1.6)}x.restore();burn(x,W,H,'Reps '+LV.reps.length+(LV.reps.length?'   Best '+Math.max(...LV.reps.map(r=>r.score)):''));
- if(LV.rc){const g=LV.rc.getContext('2d'),fs2=W/40;g.drawImage(lv,0,0,W,H);lab(g,'Original',10,10,fs2);g.drawImage(c,W,0,W,H);lab(g,'Annotated',2*W-10,H-fs2*1.7-10,fs2,1)}
+ if(LV.rc){const g=LV.rc.getContext('2d'),fs2=W/40,BH=Math.round(W*.075),cols=LV.lay==='ann'?1:2,yl=BH+H-fs2*1.7-10;brandBar(g,W*cols,BH);
+  if(LV.lay==='ann')g.drawImage(c,0,BH);
+  else if(LV.lay==='both'){g.drawImage(lv,0,BH,W,H);lab(g,'Original',W-10,yl,fs2,1);g.drawImage(c,W,BH,W,H);lab(g,'Annotated',2*W-10,yl,fs2,1)}
+  else{const s=LV.sp.getContext('2d');s.fillStyle='#0d1216';s.fillRect(0,0,W,H);if(p){s.lineWidth=Math.max(3,W/150);s.lineCap='round';if(mm)ghostD(s,W,H,p,Object.assign({},mm,{us:mm.up}));skel(s,W,H,p)}
+   g.drawImage(c,0,BH);lab(g,'Annotated',W-10,yl,fs2,1);g.drawImage(LV.sp,W,BH);lab(g,'Skeleton only',2*W-10,yl,fs2,1)}}
  requestAnimationFrame(liveLoop)}
 $('#lstop').onclick=async()=>{if(!LV)return;const S2=LV;LV=null;S2.sg=sig(S2.fr);S2.lv.srcObject.getTracks().forEach(t=>t.stop());S2.lv.remove();$('#lgo').disabled=true;$('#lstop').disabled=true;if(v.videoWidth)ar=v.videoWidth/v.videoHeight;
  let blob=null;if(S2.rec&&S2.rec.state!=='inactive'){const d=new Promise(r=>S2.rec.onstop=r);S2.rec.stop();await d;blob=new Blob(S2.ch,{type:vtype(S2.mt)})}
@@ -650,6 +660,71 @@ function confidence(){const have=S.filter(Boolean),cov=have.length/(S.length||1)
  if(!reps.length)pts-=15;
  el('p','Analysis confidence: '+(pts>=80?'High':pts>=55?'Medium':'Low')+(tips.length?'. To improve it:':'. The footage suits the analysis.'),null,'note');
  if(tips.length){const u=el('ul');tips.forEach(t=>el('li',t,u))}}
+/* ---------- clearer video-format errors: read the codec from the file itself ---------- */
+let CUR=null,SN={};
+async function sniff(f){const r={video:'',audio:'',box:''};
+ try{const n=6e6,parts=[await f.slice(0,Math.min(f.size,n)).arrayBuffer()];if(f.size>n)parts.push(await f.slice(Math.max(n,f.size-n)).arrayBuffer());
+  const hd=new Uint8Array(parts[0],0,Math.min(12,parts[0].byteLength));r.box=hd[0]===0x1A&&hd[1]===0x45?'WebM or Matroska':String.fromCharCode(...hd).includes('ftyp')?'MP4 or MOV':'unknown';
+  const V={hvc1:'HEVC (H.265)',hev1:'HEVC (H.265)',dvh1:'HEVC (H.265)',dvhe:'HEVC (H.265)',avc1:'H.264',avc3:'H.264',av01:'AV1',vp09:'VP9',mp4v:'MPEG-4 Part 2',apcn:'ProRes',apch:'ProRes'},A={mp4a:'AAC','ac-3':'Dolby AC-3','ec-3':'Dolby E-AC-3',Opus:'Opus',alac:'Apple Lossless',sowt:'PCM'};
+  for(const b of parts){const t=new TextDecoder('latin1').decode(b);let i=-1;while((i=t.indexOf('stsd',i+1))>=0){const fc=t.substr(i+16,4);if(V[fc]&&!r.video)r.video=V[fc];if(A[fc]&&!r.audio)r.audio=A[fc]}}}catch(e){}
+ return r}
+async function codecMsg(f){const r=f?await sniff(f):{},code=v.error&&v.error.code;SN.d=[r.box,r.video,r.audio].filter(Boolean).join(' / ');
+ const how=' Convert it to H.264 with HandBrake (free, preset Fast 1080p30), or on an iPhone set Settings > Camera > Formats > Most Compatible before filming.';
+ if(r.video==='HEVC (H.265)')return 'This video uses HEVC (H.265)'+(r.audio?' with '+r.audio+' audio':'')+', which this browser cannot play. On a Mac, Safari plays it. On Windows, Edge can play it once the HEVC Video Extensions are installed from the Microsoft Store.'+how;
+ if(r.video==='H.264')return 'This video is H.264, which browsers normally play, but this browser rejected it (media error '+code+'). It may be damaged, use an unusual profile such as 10-bit, or carry an unsupported audio track'+(r.audio?' ('+r.audio+')':'')+'. Re-export it from your editing app or HandBrake as H.264 with AAC audio.';
+ if(r.video)return 'This video uses '+r.video+', which this browser cannot play.'+how;
+ return code===3||code===4?'This browser cannot play this video. The most common cause is HEVC (H.265) from an iPhone or GoPro.'+how+' Safari on a Mac plays HEVC directly.':'The video could not be loaded (media error '+(code||'unknown')+').'}
+/* ---------- the full Coach's report as a PDF (no library, works offline) ---------- */
+function pdfBytes(s){const u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i)&255;return u}
+function pdfText(s){return String(s).replace(/[\u2018\u2019]/g,"'").replace(/[\u201c\u201d]/g,'"').replace(/[\u2013\u2014]/g,'-').replace(/\u2022/g,'\x95').replace(/[^\x00-\xff]/g,'?').replace(/[\\()]/g,'\\$&')}
+function PdfDoc(){const W=595.28,H=841.89,M=42,CW=W-2*M,pages=[],imgs=[],mc=document.createElement('canvas').getContext('2d');let cp=null,y=0;
+ const mw=(t,sz,b)=>{mc.font=(b?'bold ':'')+sz+'px Arial, Helvetica, sans-serif';return mc.measureText(t).width},np=()=>{cp={ops:[]};pages.push(cp);y=H-50},room=h=>{if(y-h<58)np()},
+  wrap=(t,sz,b,w)=>{const o=[];let l='';t.split(' ').forEach(wd=>{const tt=l?l+' '+wd:wd;if(mw(tt,sz,b)>w&&l){o.push(l);l=wd}else l=tt});if(l)o.push(l);return o},
+  opT=(s,x,yy,sz,f,c)=>'BT /'+f+' '+sz+' Tf '+c.join(' ')+' rg '+x.toFixed(1)+' '+yy.toFixed(1)+' Td ('+pdfText(s)+') Tj ET',txt=(...a)=>cp.ops.push(opT(...a)),
+  reg=(jpg,w,h)=>{imgs.push({jpg,w,h});return imgs.length-1};
+ return {W,H,M,CW,start(){np()},room,tw:mw,setY(v){y=v},
+  para(t,o={}){const sz=o.size||10,b=o.bold,f=o.font||(b?'F2':'F1'),ind=o.ind||0,lead=sz*1.38,c=o.color||[.07,.09,.1];room(lead+(o.before||0)+(o.keep||0));y-=o.before||0;
+   wrap((o.bullet?'\x95  ':'')+t,sz,b,CW-ind).forEach((ln,i)=>{room(lead);y-=lead;txt(ln,M+ind+(o.bullet&&i>0?9:0),y,sz,f,c)});y-=o.after==null?4:o.after},
+  rule(){room(8);cp.ops.push('0.83 0.31 0.1 RG 1 w '+M+' '+y.toFixed(1)+' m '+(W-M)+' '+y.toFixed(1)+' l S');y-=8},
+  image(jpg,w,h,pw,ph){room(ph+26);y-=ph;const id=reg(jpg,w,h);cp.ops.push('q '+pw.toFixed(1)+' 0 0 '+ph.toFixed(1)+' '+M+' '+y.toFixed(1)+' cm /Im'+id+' Do Q');y-=4},
+  imageAt(jpg,w,h,x,yy,pw,ph){const id=reg(jpg,w,h);cp.ops.push('q '+pw.toFixed(1)+' 0 0 '+ph.toFixed(1)+' '+x.toFixed(1)+' '+yy.toFixed(1)+' cm /Im'+id+' Do Q')},
+  at:txt,
+  finish(footL){const N=pages.length;pages.forEach((p,i)=>{p.ops.push('0.8 0.83 0.86 RG 0.5 w '+M+' 46 m '+(W-M)+' 46 l S');p.ops.push(opT(footL,M,34,7.5,'F1',[.36,.4,.45]));p.ops.push(opT('Page '+(i+1)+' of '+N,W-M-48,34,7.5,'F1',[.36,.4,.45]))});
+   const parts=[],off=[];let len=0;const push=u=>{parts.push(u);len+=u.length},obj=(id,s)=>{off[id]=len;push(pdfBytes(id+' 0 obj\n'+s+'\nendobj\n'))},
+    stream=(id,dict,bytes)=>{off[id]=len;push(pdfBytes(id+' 0 obj\n<< '+dict+' /Length '+bytes.length+' >>\nstream\n'));push(bytes);push(pdfBytes('\nendstream\nendobj\n'))};
+   push(pdfBytes('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n'));obj(1,'<< /Type /Catalog /Pages 2 0 R >>');const base=6+imgs.length;
+   obj(2,'<< /Type /Pages /Kids [ '+pages.map((_,i)=>(base+i*2)+' 0 R').join(' ')+' ] /Count '+N+' >>');
+   obj(3,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');obj(4,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');obj(5,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding >>');
+   imgs.forEach((im,i)=>stream(6+i,'/Type /XObject /Subtype /Image /Width '+im.w+' /Height '+im.h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode',im.jpg));
+   const xo=imgs.map((_,i)=>'/Im'+i+' '+(6+i)+' 0 R').join(' ');
+   pages.forEach((p,i)=>{const pid=base+i*2;obj(pid,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+W+' '+H+'] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> /XObject << '+xo+' >> >> /Contents '+(pid+1)+' 0 R >>');stream(pid+1,'',pdfBytes(p.ops.join('\n')))});
+   const inf=base+N*2;obj(inf,'<< /Title (Pop-up coaching report) /Author (Schmied Research And Development Pty Ltd) >>');const xr=len;let xs='xref\n0 '+(inf+1)+'\n0000000000 65535 f \n';
+   for(let i=1;i<=inf;i++)xs+=String(off[i]).padStart(10,'0')+' 00000 n \n';xs+='trailer\n<< /Size '+(inf+1)+' /Root 1 0 R /Info '+inf+' 0 R >>\nstartxref\n'+xr+'\n%%EOF';push(pdfBytes(xs));return new Blob(parts,{type:'application/pdf'})}}}
+function reportBlocks(){const o=[],t=e=>{const c=e.cloneNode(true);c.querySelectorAll('button').forEach(b=>b.remove());return c.textContent.replace(/\s+/g,' ').trim()};
+ [...$('#out').children].forEach(n=>{const g=n.tagName;
+  if(g==='H3')o.push({k:'h',t:t(n)});
+  else if(g==='P')o.push({k:n.className==='score'?'score':/note/.test(n.className)?'note':'p',t:t(n)});
+  else if(g==='UL'||g==='OL')[...n.children].forEach((li,i)=>{const kids=[...li.children];
+   if(!kids.some(k=>['B','P','UL'].includes(k.tagName))){o.push({k:'bul',t:t(li)});return}
+   kids.forEach(k=>{if(k.tagName==='B')o.push({k:'card',t:(g==='OL'?(i+1)+'. ':'')+t(k)});else if(k.tagName==='P')o.push({k:k.className==='tiph'?'tip':k.className==='drill'?'drill':'ind',t:t(k)});else if(k.tagName==='UL')[...k.children].forEach(q=>o.push({k:'bul2',t:t(q)}))})})});return o}
+async function reportPdf(){if(!F.length||busy||!$('#out').children.length){msg('Load and analyse a video first, so there is a report to save.');return}
+ busy=true;try{msg('Building the PDF report...');const W=ov.width,H=ov.height,r=reps[0],last=F.length-1,ember=[.83,.31,.1],muted=[.36,.4,.45];
+  let ix,names;if(r){ix=[r.a,r.a+(r.b-r.a)*.35,r.a+(r.b-r.a)*.7,r.b,Math.min(last,r.b+Math.ceil(FPS*.6))].map(Math.round);names=['Lie','Chest up','Push','Land','Ride']}else{ix=[.2,.4,.6,.8].map(f=>Math.round(last*f));names=['20% of the clip','40% of the clip','60% of the clip','80% of the clip']}
+  const an=document.createElement('canvas'),sp=document.createElement('canvas'),cv=document.createElement('canvas');an.width=sp.width=W;an.height=sp.height=H;cv.width=W*2;cv.height=H;
+  const jp=c=>{const bin=atob(c.toDataURL('image/jpeg',.82).split(',')[1]),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u},grabs=[];
+  for(let k=0;k<ix.length;k++){const i=ix[k];await seek(F[i].t);an.getContext('2d').drawImage(v,0,0,W,H);draw(an,false,i,true);draw(sp,true,i);const g=cv.getContext('2d');g.drawImage(an,0,0);g.drawImage(sp,W,0);grabs.push({jpg:jp(cv),t:F[i].t,n:names[k]})}
+  const lc=document.createElement('canvas');lc.width=lc.height=160;const lx=lc.getContext('2d');lx.fillStyle='#fff';lx.fillRect(0,0,160,160);lx.drawImage(document.querySelector('.logo'),0,0,160,160);
+  const d=PdfDoc(),nm=$('#sname').value.trim()||'Surfer',date=new Date().toLocaleDateString();d.start();
+  d.imageAt(jp(lc),160,160,d.M,d.H-84,40,40);d.at('Schmied Research And Development Pty Ltd',d.M+50,d.H-60,14,'F2',[.07,.09,.1]);d.at('Seeking only peace and friendship, to teach if we are called upon, to be taught if we are fortunate.',d.M+50,d.H-74,7.6,'F3',muted);
+  const t1='Pop-up coaching report',t2=nm+'   '+date;d.at(t1,d.W-d.M-d.tw(t1,12,1),d.H-58,12,'F2',ember);d.at(t2,d.W-d.M-d.tw(t2,9,0),d.H-72,9,'F1',muted);d.setY(d.H-92);d.rule();
+  const kinds={h:{size:13,bold:true,color:ember,before:10,after:4,keep:60},score:{size:22,bold:true,color:ember,before:4,after:2},note:{size:8.5,color:muted,after:3},p:{size:10},bul:{size:10,bullet:true,ind:6},card:{size:11,bold:true,before:8,after:2,keep:95},ind:{size:9.5,ind:8,after:2},tip:{size:8.5,bold:true,color:muted,ind:8,after:1},bul2:{size:9.5,bullet:true,ind:16,after:1},drill:{size:9.5,ind:8,font:'F3',after:4}};
+  let placed=false;const place=()=>{if(placed||!grabs.length)return;placed=true;d.para('Screen grabs: annotated video (left) and skeleton only (right)',{size:13,bold:true,color:ember,before:12,after:6});
+   grabs.forEach(g=>{d.image(g.jpg,2*W,H,d.CW,d.CW*H/(2*W));d.para(g.n+'  ('+g.t.toFixed(2)+' s)',{size:8.5,color:muted,after:8})})};
+  reportBlocks().forEach(b=>{if(b.k==='h'&&/Recommended improvements/.test(b.t))place();d.para(b.t,kinds[b.k]||kinds.p)});place();
+  const blob=d.finish('Schmied Research And Development Pty Ltd  |  Dr Steven Schmied, sschmie@tpg.com.au, Mob. +61 418 513 890');
+  dl(blob,'popup-report-'+nm.replace(/[^\w-]+/g,'_')+'-'+new Date().toISOString().slice(0,10)+'.pdf');msg('The full report was saved as a PDF.')}
+ catch(e){msg('Could not build the PDF: '+(e&&e.message||e))}finally{busy=false;v.currentTime=0;paint()}}
+$('#xpdf').onclick=reportPdf;
 /* ---------- mode switch: upload or live ---------- */
 let mode='upload';
 function setMode(m){if(m===mode)return true;
