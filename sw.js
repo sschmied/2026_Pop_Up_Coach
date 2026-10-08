@@ -1,4 +1,4 @@
-const V='popup-coach-v9';
+const V='popup-coach-v11';
 const CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 const CDN=['cdn.jsdelivr.net','storage.googleapis.com','fonts.googleapis.com','fonts.gstatic.com'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
